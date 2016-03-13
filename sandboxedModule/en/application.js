@@ -9,3 +9,11 @@ module.exports = function() {
 	// Print from the exported function context
   console.log('From application exported function');
 };
+
+setTimeout(function() {
+  console.log('[Timeout] Hello');
+}, 1500);
+
+setInterval(function () {
+  console.log('[Inverval] Again');
+}, 2500);

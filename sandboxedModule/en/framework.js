@@ -8,7 +8,12 @@ var fs = require('fs'),
 
 // Create a hash and turn it into the sandboxed context which will be
 // the global context of an application
-var context = { module: {}, console: console };
+var context = {
+  module: {},
+  console: console,
+  setTimeout: setTimeout,
+  setInterval: setInterval
+};
 context.global = context;
 var sandbox = vm.createContext(context);
 
@@ -16,11 +21,11 @@ var sandbox = vm.createContext(context);
 var fileName = './application.js';
 fs.readFile(fileName, function(err, src) {
   // We need to handle errors here
-  
+
   // Run an application in sandboxed context
   var script = vm.createScript(src, fileName);
   script.runInNewContext(sandbox);
-  
+
   // We can access a link to exported interface from sandbox.module.exports
   // to execute, save to the cache, print to console, etc.
 });
