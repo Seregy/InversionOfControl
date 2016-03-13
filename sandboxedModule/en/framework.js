@@ -9,25 +9,44 @@ var fs = require('fs'),
 
 // Create a hash and turn it into the sandboxed context which will be
 // the global context of an application
-var context = {
-  module: {},
-  console: console,
-  setTimeout: setTimeout,
-  setInterval: setInterval,
-  util: util
-};
-context.global = context;
-var sandbox = vm.createContext(context);
+function createSandboxContext() {
+  var context = {
+    module: {},
+    console: console,
+    setTimeout: setTimeout,
+    setInterval: setInterval,
+    util: util
+  };
+  context.global = context;
+  return vm.createContext(context);
+}
 
 // Read an application source code from the file
-var fileName = './application.js';
-fs.readFile(fileName, function(err, src) {
-  // We need to handle errors here
+function runApp(appName) {
+  var fileName = appName;
 
-  // Run an application in sandboxed context
-  var script = vm.createScript(src, fileName);
-  script.runInNewContext(sandbox);
+  if (!fileName.endsWith('.js')) {
+    fileName += '.js';
+  }
 
-  // We can access a link to exported interface from sandbox.module.exports
-  // to execute, save to the cache, print to console, etc.
-});
+  fs.readFile(fileName, function(err, src) {
+    // We need to handle errors here
+    if (err) {
+      console.error(err);
+      return;
+    }
+
+    //Create sandbox
+    var sandbox = createSandboxContext();
+
+    // Run an application in sandboxed context
+    var script = vm.createScript(src, fileName);
+    script.runInNewContext(sandbox);
+
+    // We can access a link to exported interface from sandbox.module.exports
+    // to execute, save to the cache, print to console, etc.
+  });
+}
+
+var app = process.argv[2] || 'application';
+runApp(app);

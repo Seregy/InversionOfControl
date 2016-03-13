@@ -1,0 +1,1 @@
+console.log('Not an application, but an app');
