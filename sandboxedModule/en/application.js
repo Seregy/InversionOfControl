@@ -5,6 +5,8 @@
 // Print from the global context of application module
 console.log('From application global context');
 
+console.log(util.format('%s : %s', 'Application', 'Tesing util.format'));
+
 module.exports = function() {
 	// Print from the exported function context
   console.log('From application exported function');
