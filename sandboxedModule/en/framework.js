@@ -5,7 +5,8 @@
 // The framework can require core libraries
 var fs = require('fs'),
     vm = require('vm'),
-    util = require('util')
+    util = require('util'),
+    os = require('os')
 
 // Create a hash and turn it into the sandboxed context which will be
 // the global context of an application
@@ -25,7 +26,15 @@ function createConsole(appName) {
   var sandboxedConsole = {
     log: function(message) {
       var d = new Date();
-      console.log(util.format("[%s] [%s] %s", appName, d.toLocaleString(), message));
+      var newMessage = util.format("[%s] [%s] %s",
+      appName, d.toLocaleString(), message);
+      console.log(newMessage);
+      fs.appendFile('framework.log', newMessage + os.EOL, function(err, src) {
+        if (err) {
+          console.error(err);
+          return;
+        }
+      });
     }
   };
   return sandboxedConsole;
