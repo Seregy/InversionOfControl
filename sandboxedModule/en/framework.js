@@ -9,16 +9,26 @@ var fs = require('fs'),
 
 // Create a hash and turn it into the sandboxed context which will be
 // the global context of an application
-function createSandboxContext() {
+function createSandboxContext(appName) {
   var context = {
     module: {},
-    console: console,
+    console: createConsole(appName),
     setTimeout: setTimeout,
     setInterval: setInterval,
     util: util
   };
   context.global = context;
   return vm.createContext(context);
+}
+
+function createConsole(appName) {
+  var sandboxedConsole = {
+    log: function(message) {
+      var d = new Date();
+      console.log(util.format("[%s] [%s] %s", appName, d.toLocaleString(), message));
+    }
+  };
+  return sandboxedConsole;
 }
 
 // Read an application source code from the file
@@ -37,7 +47,7 @@ function runApp(appName) {
     }
 
     //Create sandbox
-    var sandbox = createSandboxContext();
+    var sandbox = createSandboxContext(appName);
 
     // Run an application in sandboxed context
     var script = vm.createScript(src, fileName);
